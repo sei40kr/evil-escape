@@ -180,13 +180,21 @@ with a key sequence."
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
       (when (evil-escape-p)
-        (let* ((modified (buffer-modified-p))
+        (let* (;; NOTE Add syl20bnr/evil-escape#91: inhibit redisplay and
+               ;;      refontification after a `read-event'.
+               (inhibit-redisplay nil)
+               (fontification-functions nil)
+
+               (modified (buffer-modified-p))
                (inserted (evil-escape--insert))
                (fkey (elt evil-escape-key-sequence 0))
                (skey (elt evil-escape-key-sequence 1))
                (evt (read-event nil nil evil-escape-delay)))
           (when inserted (evil-escape--delete))
-          (set-buffer-modified-p modified)
+          ;; NOTE Add syl20bnr/evil-escape#91: replace `set-buffer-modified-p'
+          ;;      with `restore-buffer-modified-p', which doesn't redisplay the
+          ;;      modeline after changing the buffer's modified state.
+          (restore-buffer-modified-p modified)
           (cond
            ((and (characterp evt)
                  (or (and (equal (this-command-keys) (evil-escape--first-key))
