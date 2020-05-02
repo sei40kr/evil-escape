@@ -208,8 +208,12 @@ with a key sequence."
                 (setq this-command esc-fun)
                 (setq this-original-command esc-fun))))
            ((null evt))
-           (t (setq unread-command-events
-                    (append unread-command-events (list evt)))))))))
+           ;; NOTE Add syl20bnr/evil-escape#93: replace with
+           ;;      `unread-command-events' with
+           ;;      `unread-post-inpout-method-events' so evil-escape doesn't
+           ;;      interfere with macro recording.
+           ((setq unread-post-inpout-method-events
+                  (append unread-post-inpout-method-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
   (let ((evil-escape-inhibit t))
