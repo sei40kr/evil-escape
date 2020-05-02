@@ -210,10 +210,10 @@ with a key sequence."
            ((null evt))
            ;; NOTE Add syl20bnr/evil-escape#93: replace with
            ;;      `unread-command-events' with
-           ;;      `unread-post-inpout-method-events' so evil-escape doesn't
+           ;;      `unread-post-input-method-events' so evil-escape doesn't
            ;;      interfere with macro recording.
-           ((setq unread-post-inpout-method-events
-                  (append unread-post-inpout-method-events (list evt)))))))))
+           ((setq unread-post-input-method-events
+                  (append unread-post-input-method-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
   (let ((evil-escape-inhibit t))
