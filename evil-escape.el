@@ -208,6 +208,7 @@ with a key sequence."
                 (setq this-command esc-fun)
                 (setq this-original-command esc-fun))))
            ((null evt))
+           ((eq major-mode 'vterm-mode) (vterm-send-string (this-command-keys)))
            ;; NOTE Add syl20bnr/evil-escape#93: replace with
            ;;      `unread-command-events' with
            ;;      `unread-post-input-method-events' so evil-escape doesn't
@@ -296,11 +297,17 @@ with a key sequence."
 
 (defun evil-escape--insert-func ()
   "Default insert function."
-  (when (not buffer-read-only) (self-insert-command 1)))
+  (when (or (eq major-mode 'vterm-mode)
+            (not buffer-read-only))
+    (let ((inhibit-read-only t))
+      (self-insert-command 1))))
 
 (defun evil-escape--delete-func ()
   "Delete char in current buffer if not read only."
-  (when (not buffer-read-only) (delete-char -1)))
+  (when (or (eq major-mode 'vterm-mode)
+            (not buffer-read-only))
+    (let ((inhibit-read-only t))
+      (delete-char -1))))
 
 (defun evil-escape--insert ()
   "Insert the first key of the sequence."
